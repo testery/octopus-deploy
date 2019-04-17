@@ -1,10 +1,11 @@
-echo "Initiating Testery Test Run for..."
+echo "Performing test run in Testery..."
 echo "  Git Owner: ${TesteryGitOwner}"
 echo "  Git Repo: ${TesteryGitRepo}"
 echo "  Git Ref: ${TesteryGitReference}"
 echo "  Testery User: ${TesteryApiUser}"
 echo "  Testery API URL: ${TesteryApiUrl}"
 echo "  Testery Feature Path: ${TesteryFeaturePath}"
+echo "  Testery Environment: ${TesteryEnvironment}"
 
 # Parameters
 $baseUrl = $TesteryApiUrl
@@ -15,20 +16,13 @@ $bytes = [System.Text.Encoding]::ASCII.GetBytes($pair)
 $base64 = [System.Convert]::ToBase64String($bytes)
 $basicAuthValue = "Basic $base64"
 
-$headers = @{ 
-  Authorization = $basicAuthValue;
-  "accept"="application/vnd.api+json";
-}
-
 $jsonHeaders = @{ 
   Authorization = $basicAuthValue;
   "accept"="application/json";
 }
-
-$login = iwr -UseBasicParsing -Uri "${TesteryApiUrl}/users/me" -Headers $headers -ContentType "application/vnd.api+json" | ConvertFrom-Json
     
-# Start a test run.
-$request = "{`"owner`":`"${TesteryGitOwner}`",`"repository`":`"${TesteryGitRepo}`",`"ref`":`"${TesteryGitReference}`",`"project`":`"${TesteryProjectName}`",`"environment`":`"#{Octopus.Deployment.Tenant.Name}`",`"buildId`":`"${TesteryBuildId}`"}"
+# Create a test run.
+$request = "{`"owner`":`"${TesteryGitOwner}`",`"repository`":`"${TesteryGitRepo}`",`"ref`":`"${TesteryGitReference}`",`"project`":`"${TesteryProjectName}`",`"environment`":`"${TesteryEnvironment}`",`"buildId`":`"${TesteryBuildId}`"}"
 echo $request
 $testRun = Invoke-WebRequest `
 	-UseBasicParsing `
